@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration packages="product.productservice.logging">
+<Configuration packages="com.products.productservice.logging">
     <Appenders>
 
         <Console name="Console" target="SYSTEM_OUT">
@@ -7,9 +7,9 @@
         </Console>
 
         <CloudWatchAppender name="CloudWatch"
-                            logGroupName="/mi-app-test/logs"
-                            logStreamName="servicioProductos"
-                            endpoint="http://localstack:4566">
+                            logGroupName="/examenU1/producto-log-group"
+                            logStreamName="microservicio-productos"
+                            endpoint="http://localstack-mainU1:4566">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n" />
         </CloudWatchAppender>
 

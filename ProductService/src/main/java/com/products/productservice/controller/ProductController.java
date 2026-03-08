@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/productos")
 @RequiredArgsConstructor
 public class ProductController {
     private final GetProductoService getProductoService;

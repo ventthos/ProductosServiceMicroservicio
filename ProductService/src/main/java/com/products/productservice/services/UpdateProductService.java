@@ -4,30 +4,44 @@ import com.products.productservice.dto.PutProductDto;
 import com.products.productservice.models.Producto;
 import com.products.productservice.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UpdateProductService {
     private final ProductoRepository productoRepository;
 
     public Producto execute(String id, PutProductDto data) {
+        log.info("Petición de actualización para el producto ID: {}", id);
+
         if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("No se puede actualizar. El producto con ID: " + id + " no existe.");
+            log.warn("Fallo de actualización: El ID {} no existe.", id);
+            throw new NoSuchElementException("No se puede actualizar. El producto con ID: " + id + " no existe.");
         }
 
-        // 2. Reemplazar todos los campos (Semántica PUT)
-        Producto producto = Producto.builder()
-                .id(id) // Mantener el mismo ID para que MongoDB sobrescriba el documento
-                .name(data.getName())
-                .description(data.getDescription())
-                .price(data.getPrice())
-                .quantity(data.getQuantity())
-                .imageUrl(data.getImageUrl())
-                .supplier(data.getSupplier())
-                .build();
+        try {
+            Producto producto = Producto.builder()
+                    .id(id)
+                    .name(data.getName())
+                    .description(data.getDescription())
+                    .price(data.getPrice())
+                    .quantity(data.getQuantity())
+                    .imageUrl(data.getImageUrl())
+                    .supplier(data.getSupplier())
+                    .build();
 
-        // 3. Guardar el reemplazo
-        return productoRepository.save(producto);
+            Producto updatedProduct = productoRepository.save(producto);
+
+            log.info("Producto con ID {} actualizado exitosamente.", id);
+            return updatedProduct;
+
+        } catch (Exception e) {
+            log.error("Error crítico al actualizar el producto {}: {}", id, e.getMessage(), e);
+            throw new RuntimeException("Error técnico durante la actualización del producto", e);
+        }
     }
 }

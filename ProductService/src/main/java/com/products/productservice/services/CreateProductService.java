@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class CreateProductService implements ServiceHandler<CreateProductDto, Producto>{
     private final ProductoRepository productoRepository;
-
+    private final ProductoProducer productoProducer;
     @Override
     public Producto execute(CreateProductDto data) {
         log.info("Iniciando creación de producto: {} ", data.getName(), data.getSupplier());
@@ -39,6 +39,9 @@ public class CreateProductService implements ServiceHandler<CreateProductDto, Pr
 
         } catch (Exception e) {
             log.error("Fallo crítico al crear el producto '{}'. Causa: {}", data.getName(), e.getMessage(), e);
+            if (!data.isFromRetry()) {
+                productoProducer.sendToRetry(data);
+            }
             throw new RuntimeException("Error en el servicio de persistencia de productos", e);
         }
     }

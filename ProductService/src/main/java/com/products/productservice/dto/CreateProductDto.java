@@ -16,4 +16,5 @@ public class CreateProductDto {
     private int quantity;
     private String imageUrl;
     private String supplier;
+    private boolean fromRetry;
 }

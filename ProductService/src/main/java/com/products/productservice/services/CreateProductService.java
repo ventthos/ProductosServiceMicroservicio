@@ -1,6 +1,7 @@
 package com.products.productservice.services;
 
 import com.products.productservice.dto.CreateProductDto;
+import com.products.productservice.exceptionhandler.RetryScheduledException;
 import com.products.productservice.models.Producto;
 import com.products.productservice.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,9 @@ public class CreateProductService implements ServiceHandler<CreateProductDto, Pr
             log.error("Fallo crítico al crear el producto '{}'. Causa: {}", data.getName(), e.getMessage(), e);
             if (!data.isFromRetry()) {
                 productoProducer.sendToRetry(data);
+                throw new RetryScheduledException(
+                        "Hubo un error. Se reintentará crear el producto lo más pronto posible"
+                );
             }
             throw new RuntimeException("Error en el servicio de persistencia de productos", e);
         }

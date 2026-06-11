@@ -20,6 +20,13 @@ public class CreateProductService implements ServiceHandler<CreateProductDto, Pr
     public Producto execute(CreateProductDto data) {
         log.info("Iniciando creación de producto: {} ", data.getName(), data.getSupplier());
 
+        if (data.getPrice() == null || data.getPrice() < 0) {
+            throw new IllegalArgumentException("El precio del producto debe ser mayor o igual a 0.");
+        }
+        if (data.getQuantity() < 0) {
+            throw new IllegalArgumentException("El stock inicial debe ser mayor o igual a 0.");
+        }
+
         try {
             Producto producto = Producto.builder()
                     .name(data.getName())
